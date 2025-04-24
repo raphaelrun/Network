@@ -1,0 +1,32 @@
+fields @timestamp, @message
+| sort @timestamp desc
+| limit 10
+ 
+stats sum(packets) as packetsTransferred by srcAddr, dstAddr
+| sort packetsTransferred  desc
+| limit 15
+	
+fields @timestamp, interfaceId, srcAddr, dstAddr, action
+| filter (interfaceId = 'eni-xxxxxxxxx' and action = 'REJECT')
+| sort @timestamp desc
+| limit 5
+
+fields @timestamp, srcAddr, dstAddr
+| sort @timestamp desc
+| limit 5
+| filter srcAddr like "172.31."
+ 
+ 
+fields @timestamp, @message
+| stats count(*) as records by dstPort, srcAddr, dstAddr as Destination
+| filter dstPort="80" or dstPort="443" or dstPort="22" or dstPort="25"
+| sort HitCount desc
+| limit 10
+ 
+fields @timestamp, @message
+| stats count(*) as records by dstPort, srcAddr, dstAddr as Destination
+| filter dstPort="80" or dstPort="443" or dstPort="22" or dstPort="25"
+| sort HitCount desc
+| limit 10
+ 
+ 
