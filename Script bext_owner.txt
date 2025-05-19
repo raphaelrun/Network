@@ -1,0 +1,27 @@
+-- Connexion en tant que superutilisateur ou un utilisateur ayant les droits nécessaires
+
+-- Création de l'utilisateur
+CREATE USER bext_owner WITH PASSWORD 'motdepasse_secure';
+
+-- Accorder l'accès à une base de données (ex: bext_db)
+GRANT CONNECT ON DATABASE bext_db TO bext_owner;
+
+-- Se connecter à la base de données pour gérer les droits sur le schéma et les objets
+\c bext_db
+
+-- Accorder les droits sur le schéma public (ou un autre schéma si nécessaire)
+GRANT USAGE, CREATE ON SCHEMA public TO bext_owner;
+
+-- Accorder les droits sur les objets existants du schéma public
+GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO bext_owner;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO bext_owner;
+
+-- Accorder les droits pour les objets créés à l’avenir dans le schéma public
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLES TO bext_owner;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO bext_owner;
+
+-- L'utilisateur pourra créer, modifier et supprimer des objets dans le schéma
+-- Ce qui inclut CREATE, ALTER, DROP à travers CREATE sur le schéma
